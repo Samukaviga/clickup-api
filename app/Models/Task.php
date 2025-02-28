@@ -17,6 +17,9 @@ class Task extends Model
         'list_id',
         'status',
         'priority',
+        'empresa',
+        'departamento_mkt',
+        'planejamento',
         'date_created',
         'date_updated',
     ];

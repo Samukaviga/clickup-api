@@ -61,12 +61,25 @@ class ClickUpService
         $response = Http::withHeaders([
             'Authorization' => env('CLICKUP_API_TOKEN'),
         ])->get("https://api.clickup.com/api/v2/list/$listId/task", [
-            'include_subtasks' => true, // Se quiser pegar subtarefas 
-        ],
-        ['custom_fields' => true]);
+            'include_closed' => true, // ✅ Incluir tarefas concluídas
+        ], ['custom_fields' => true] , ['include_subtasks' => true]);
     
         return $response->json();
     }
+
+    /*
+    public function getTasks($listId)
+    {
+        $response = Http::withHeaders([
+            'Authorization' => env('CLICKUP_API_TOKEN'),
+        ])->get("https://api.clickup.com/api/v2/list/$listId/task", [
+            'include_subtasks' => true, // Se quiser pegar subtarefas 
+        ],
+        ['custom_fields' => true],
+        ['include_closed' => true]);
+    
+        return $response->json();
+    } */
 
 
     // Buscar Tasks de uma List e salvar no banco
