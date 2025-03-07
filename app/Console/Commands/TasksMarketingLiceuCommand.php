@@ -14,7 +14,7 @@ class TasksMarketingLiceuCommand extends Command
     protected $signature = 'app:created-tasks-marketing-liceu-command';
 
 
-    protected $description = 'Taks of List Marketing Liceu';
+    protected $description = 'Tasks of List Marketing Liceu';
 
     protected $clickUpService;
 
