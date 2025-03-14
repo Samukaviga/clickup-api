@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Assignee;
 use App\Models\Task;
 use App\Models\TaskAssignee;
 use App\Models\TaskList;
@@ -27,8 +28,31 @@ class TasksMarketingLiceuCommand extends Command
 
     public function handle()
     {
-        $folder = $this->clickUpService->getTasks("901108220827");
 
+        $workspaces = $this->clickUpService->getWorkspaces();
+
+        $members = $workspaces['teams'][0]['members'];
+
+        foreach($members as $member){
+
+            $assignee_id = $member['user']['id'];
+            $username = $member['user']['username'];
+            $email = $member['user']['email'];
+            $profile_picture = $member['user']['profilePicture'];
+
+
+            Assignee::updateOrCreate(
+                ['assignee_id' => $assignee_id], 
+                [
+                    'username' => $username ?? null,
+                    'email' => $email ?? null,
+                    'profile_picture' => $profile_picture ?? null,
+                ]
+            );
+        }
+
+
+        $folder = $this->clickUpService->getTasks("901108220827");
 
         TaskList::updateOrCreate(
             ['list_id' => "901108220827"],
@@ -39,14 +63,12 @@ class TasksMarketingLiceuCommand extends Command
         foreach ($folder['tasks'] as $task) { 
 
            
-
             $empresaSelecionada = null;
             $departamentoSelecionado = null;
             $planejamentoSelecionado = null;
 
             foreach ($task['custom_fields'] as $field) { 
-
-             
+  
 
                 if ($field['name'] === 'Empresa' && isset($field['value'])) {
                     foreach ($field['type_config']['options'] as $option) {
@@ -100,6 +122,8 @@ class TasksMarketingLiceuCommand extends Command
                     'empresa' => $empresaSelecionada ?? null,
                     'departamento_mkt' => $departamentoSelecionado ?? null,
                     'planejamento' => $planejamentoSelecionado ?? null,
+                    'start_date' => isset($task['start_date']) ? date('Y-m-d H:i:s', $task['start_date'] / 1000) : null,
+                    'due_date' => isset($task['due_date']) ? date('Y-m-d H:i:s', $task['due_date'] / 1000) : null,
                 ]
             );
 

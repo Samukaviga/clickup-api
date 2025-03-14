@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('task_assignees', function (Blueprint $table) {
             $table->id();
             $table->string('task_id');
-            $table->bigInteger('assignee_id'); // ID do usuário no ClickUp
+            $table->string('assignee_id'); // ID do usuário no ClickUp
             $table->string('assignee_name')->nullable(); // Nome do usuário (opcional)
             $table->timestamps();
 

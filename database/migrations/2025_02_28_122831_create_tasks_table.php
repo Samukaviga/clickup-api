@@ -23,6 +23,17 @@ return new class extends Migration
             $table->string('empresa')->nullable();
             $table->string('departamento_mkt')->nullable();
             $table->string('planejamento')->nullable();
+            
+            $table->string('cad')->nullable();
+            $table->string('cargo')->nullable();
+            $table->string('comparecimento')->nullable();
+            $table->string('fases_lead_time')->nullable();
+            $table->string('mes')->nullable();
+            $table->string('unidade')->nullable();
+
+
+            $table->string('start_date')->nullable();
+            $table->string('due_date')->nullable();
 
             $table->timestamp('date_created')->nullable();
             $table->timestamp('date_updated')->nullable();

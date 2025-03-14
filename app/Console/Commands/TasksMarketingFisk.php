@@ -8,14 +8,12 @@ use App\Models\TaskList;
 use App\Services\ClickUpService;
 use Illuminate\Console\Command;
 
-class TasksMarketingColegioItaquaCommand extends Command
+class TasksMarketingFisk extends Command
 {
-    
-    protected $signature = 'app:tasks-marketing-colegio-itaqua-command';
+    protected $signature = 'app:tasks-marketing-fisk';
 
     
-    protected $description = 'Tasks of List Marketing Colegio Itaqua';
-
+    protected $description = 'Command description';
 
     protected $clickUpService;
 
@@ -24,20 +22,21 @@ class TasksMarketingColegioItaquaCommand extends Command
         parent::__construct();
         $this->clickUpService = $clickUpService;
     }
-   
+
     public function handle()
     {
-        $folder = $this->clickUpService->getTasks("901108288683");
+        $folder = $this->clickUpService->getTasks("901108303682");
 
 
         TaskList::updateOrCreate(
-            ['list_id' => "901108288683"],
-            ['name' => "Marketing Colegio Itaqua"]
+            ['list_id' => "901108303682"],
+            ['name' => "Marketing Fisk"]
         );
 
 
         foreach ($folder['tasks'] as $task) { 
 
+           
 
             $empresaSelecionada = null;
             $departamentoSelecionado = null;
@@ -83,13 +82,15 @@ class TasksMarketingColegioItaquaCommand extends Command
                 }
             }
 
+            //dd($empresaSelecionada);
 
+            //dd($task['priority']['priority']);
 
             $taskModel = Task::updateOrCreate(
                 ['task_id' => $task['id']],
                 [
                     'name' => $task['name'],
-                    'list_id' => "901108288683",
+                    'list_id' => "901108303682",
                     'status' => $task['status']['status'],
                     'priority' => $task['priority']['priority'] ?? null,
                     'date_created' => date('Y-m-d H:i:s', $task['date_created'] / 1000),

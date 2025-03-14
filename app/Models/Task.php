@@ -11,6 +11,10 @@ class Task extends Model
 
     protected $table = 'tasks';
 
+   
+
+
+
     protected $fillable = [
         'task_id',
         'name',
@@ -20,8 +24,16 @@ class Task extends Model
         'empresa',
         'departamento_mkt',
         'planejamento',
+        'start_date',
+        'due_date',
         'date_created',
         'date_updated',
+        'cad',
+        'cargo',
+        'comparecimento',
+        'fases_lead_time',
+        'mes',
+        'unidade',
     ];
 
     protected $casts = [

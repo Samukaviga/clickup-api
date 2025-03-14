@@ -30,6 +30,8 @@ Route::get('/clickup/list', [ClickUpController::class, 'getLists']);
 
 Route::get('/clickup/task', [ClickUpController::class, 'getTasks']);
 
+Route::get('/clickup/members', [ClickUpController::class, 'getMembers']);
+
 
 Route::get('/teste', [ClickUpController::class, 'teste']);
 
