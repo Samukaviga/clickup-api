@@ -39,7 +39,7 @@ class ClickUpController extends Controller
     public function getFolders()
     {
 
-            # space Recursos Humanos: 90113577562
+        # space Recursos Humanos: 90113577562
 
         $folder = $this->clickUpService->getFolders("90113577562"); //Space de tecnologia da informacao
 
@@ -66,20 +66,11 @@ class ClickUpController extends Controller
 
         # Lista RH - lead time: 901109379346
 
-        $folder = $this->clickUpService->getTasks("901109379346");
+        # $folder = $this->clickUpService->getTasks("901109379346");
 
-       # $dd($folder['tasks'][1]['dependencies']);
+        $folder = $this->clickUpService->getTask('868cnag2w');
 
-        $tasksId = $folder['tasks'][1]['dependencies'][0]['task_id'];
-        
-       # dd($tasksId);
-       
-       # 868cnag4b
-
-        $result = $this->clickUpService->getTask("868cnag4b");
-
-        dd($result);
-
+        dd($folder);
     }
 
     public function createMembers()
@@ -90,7 +81,7 @@ class ClickUpController extends Controller
         #dd($workspaces['teams'][0]['members']);
         $members = $workspaces['teams'][0]['members'];
 
-        foreach($members as $member){
+        foreach ($members as $member) {
 
             $assignee_id = $member['user']['id'];
             $username = $member['user']['username'];
@@ -99,14 +90,13 @@ class ClickUpController extends Controller
 
 
             Assignee::updateOrCreate(
-                ['assignee_id' => $assignee_id], 
+                ['assignee_id' => $assignee_id],
                 [
                     'username' => $username ?? null,
                     'email' => $email ?? null,
                     'profile_picture' => $profile_picture ?? null,
                 ]
             );
-
         }
     }
 
@@ -121,7 +111,7 @@ class ClickUpController extends Controller
         );
 
 
-        foreach ($folder['tasks'] as $task) { 
+        foreach ($folder['tasks'] as $task) {
 
 
             $cadSelecionado = null;
@@ -130,15 +120,15 @@ class ClickUpController extends Controller
             $faseLeadTimeSelecionado = null;
             $mesSelecionado = null;
             $unidadeSelecionado = null;
-            
+
             $empresaSelecionada = null;
             $departamentoSelecionado = null;
             $planejamentoSelecionado = null;
 
-            foreach ($task['custom_fields'] as $field) { 
+            foreach ($task['custom_fields'] as $field) {
 
                 if ($field['name'] === 'Unidade' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
+                    foreach ($field['type_config']['options'] as $option) {
 
                         if ($option['orderindex'] == $field['value']) {
                             $unidadeSelecionado = $option['name'];
@@ -148,7 +138,7 @@ class ClickUpController extends Controller
                 }
 
                 if ($field['name'] === 'Mês' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
+                    foreach ($field['type_config']['options'] as $option) {
 
                         if ($option['orderindex'] == $field['value']) {
                             $mesSelecionado = $option['name'];
@@ -158,7 +148,7 @@ class ClickUpController extends Controller
                 }
 
                 if ($field['name'] === 'Fases Lead Time' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
+                    foreach ($field['type_config']['options'] as $option) {
 
                         if ($option['orderindex'] == $field['value']) {
                             $faseLeadTimeSelecionado = $option['name'];
@@ -168,7 +158,7 @@ class ClickUpController extends Controller
                 }
 
                 if ($field['name'] === 'Comparecimento' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
+                    foreach ($field['type_config']['options'] as $option) {
 
                         if ($option['orderindex'] == $field['value']) {
                             $comparecimentoSelecionado = $option['name'];
@@ -178,7 +168,7 @@ class ClickUpController extends Controller
                 }
 
                 if ($field['name'] === 'Cargo' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
+                    foreach ($field['type_config']['options'] as $option) {
 
                         if ($option['orderindex'] == $field['value']) {
                             $cargoSelecionado = $option['name'];
@@ -192,13 +182,12 @@ class ClickUpController extends Controller
 
                     $valueArray = str_split($field['value'], 3); // divide a cada 3 caracteres
                     $valueFormatado = implode(',', $valueArray);
-                    
-                    $cadSelecionado = $valueFormatado ?? null;
 
+                    $cadSelecionado = $valueFormatado ?? null;
                 }
 
                 if ($field['name'] === 'Empresa' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
+                    foreach ($field['type_config']['options'] as $option) {
 
                         if ($option['orderindex'] == $field['value']) {
                             $empresaSelecionada = $option['name'];
@@ -206,13 +195,13 @@ class ClickUpController extends Controller
                         }
                     }
                 }
-                
+
                 if ($field['name'] === 'Depto. MKT' && isset($field['value'])) {
-                    
+
                     foreach ($field['type_config']['options'] as $option) {
                         if ($option['orderindex'] === $field['value']) {
                             $departamentoSelecionado = $option['name'];
-                           break;
+                            break;
                         }
                     }
                 }
@@ -225,7 +214,7 @@ class ClickUpController extends Controller
                         }
                     }
                 }
-            }   
+            }
 
 
             $taskModel = Task::updateOrCreate(
@@ -264,9 +253,9 @@ class ClickUpController extends Controller
             }
         }
     }
-        
-        
-    
+
+
+
 
 
     /*
