@@ -76,7 +76,7 @@ class ClickUpController extends Controller
        
        # 868cnag4b
 
-        $result = $this->clickUpService->getTask("868cnag4b");
+        $result = $this->clickUpService->getTask("868cnag2w");
 
         dd($result);
 

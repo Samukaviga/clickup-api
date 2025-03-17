@@ -62,7 +62,16 @@ class ClickUpService
             'Authorization' => env('CLICKUP_API_TOKEN'),
         ])->get("https://api.clickup.com/api/v2/task/$task?include_subtasks=true", [
             'include_closed' => true, // ✅ Incluir tarefas concluídas
-        ], ['custom_fields' => true] , ['include_closed' => true]);
+        ], ['custom_fields' => true], ['include_closed' => true], ['subtasks' => true]);
+
+        return $response->json();
+    }
+
+    public function getSubtasks($taskId)
+    {
+        $response = Http::withHeaders([
+            'Authorization' => env('CLICKUP_API_TOKEN'),
+        ])->get("https://api.clickup.com/api/v2/task/$taskId/subtask");
 
         return $response->json();
     }
@@ -75,8 +84,8 @@ class ClickUpService
             'Authorization' => env('CLICKUP_API_TOKEN'),
         ])->get("https://api.clickup.com/api/v2/list/$listId/task?subtasks=true", [
             'include_closed' => true, // ✅ Incluir tarefas concluídas
-        ], ['custom_fields' => true] , ['include_closed' => true]);
-    
+        ], ['custom_fields' => true], ['include_closed' => true]);
+
         return $response->json();
     }
 
@@ -118,7 +127,4 @@ class ClickUpService
 
         return "Tasks sincronizadas!";
     }
-
-
-    
 }

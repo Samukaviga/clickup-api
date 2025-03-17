@@ -26,15 +26,15 @@ class TarefaAgendada extends ServiceProvider
 
 
 
-        $schedule->command(TaskRhLeadTimeCommand::class)->everyMinute(); // executa a cada 1 minuto
+        #$schedule->command(TaskRhLeadTimeCommand::class)->everyMinute(); // executa a cada 1 minuto
         
-        $schedule->command(TasksMarketingFisk::class)->everyMinute(); // executa a cada 1 minuto
+       # $schedule->command(TasksMarketingFisk::class)->everyMinute(); // executa a cada 1 minuto
         
-        $schedule->command(TasksMarketingEstacaoFuturaCommand::class)->everyMinute(); // executa a cada 1 minuto
+        #$schedule->command(TasksMarketingEstacaoFuturaCommand::class)->everyMinute(); // executa a cada 1 minuto
         
         $schedule->command(TasksMarketingLiceuCommand::class)->everyMinute(); // executa a cada 1 minuto
         
-        $schedule->command(TasksMarketingColegioItaquaCommand::class)->everyMinute(); // executa a cada 1 minuto
+        #$schedule->command(TasksMarketingColegioItaquaCommand::class)->everyMinute(); // executa a cada 1 minuto
         
        /*
        $schedule->call(function () {
