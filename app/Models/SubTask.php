@@ -2,18 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\TaskAssignee;
-
 use Illuminate\Database\Eloquent\Model;
 
-class Task extends Model
+class SubTask extends Model
 {
 
-    protected $table = 'tasks';
-
-   
-
-
+    protected $table = "subtasks";
 
     protected $fillable = [
         'task_id',
@@ -53,4 +47,9 @@ class Task extends Model
     {
         return $this->hasMany(TaskAssignee::class, 'task_id', 'task_id');
     }
+
+    public function parentTask()
+{
+    return $this->belongsTo(Task::class, 'parent', 'task_id');
+}
 }

@@ -28,7 +28,9 @@ Route::get('/clickup/folder', [ClickUpController::class, 'getFolders']);
 
 Route::get('/clickup/list', [ClickUpController::class, 'getLists']);
 
-Route::get('/clickup/task', [ClickUpController::class, 'getTasks']);
+Route::get('/clickup/tasks', [ClickUpController::class, 'getTasks']);
+
+Route::get('/clickup/task', [ClickUpController::class, 'getTask']);
 
 Route::get('/clickup/members', [ClickUpController::class, 'getMembers']);
 

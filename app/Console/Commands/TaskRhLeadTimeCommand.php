@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessClickUpTasks;
 use App\Models\Task;
 use App\Models\TaskAssignee;
 use App\Models\TaskList;
@@ -24,10 +25,30 @@ class TaskRhLeadTimeCommand extends Command
         $this->clickUpService = $clickUpService;
     }
 
-
+    
+    
     public function handle()
     {
-        
+        // Buscar as tarefas do ClickUp
+        $folder = $this->clickUpService->getTasks("901109379346");
+
+        // Atualizar ou criar a lista de tarefas
+        TaskList::updateOrCreate(
+            ['list_id' => "901109379346"],
+            ['name' => "RH - Lead Time"]
+        );
+
+        // Enviar cada tarefa para a fila
+        foreach ($folder['tasks'] as $task) {
+            ProcessClickUpTasks::dispatch($task);
+        }
+    }
+    
+
+    /*
+    public function handle()
+    {
+            // RH - Lead Time
             $folder = $this->clickUpService->getTasks("901109379346");
     
     
@@ -104,12 +125,8 @@ class TaskRhLeadTimeCommand extends Command
                     }
     
                     if ($field['name'] === 'CAD' && isset($field['value'])) {
-    
-    
-                        $valueArray = str_split($field['value'], 3); // divide a cada 3 caracteres
-                        $valueFormatado = implode(',', $valueArray);
                         
-                        $cadSelecionado = $valueFormatado ?? null;
+                        $cadSelecionado = $field['value'] ?? null;
     
                     }
     
@@ -180,5 +197,5 @@ class TaskRhLeadTimeCommand extends Command
                 }
             }
         
-    }
+    } */
 }

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Console\Commands\SyncClickUpData;
+use App\Console\Commands\TaskEstrategicoTaticoCommand;
 use App\Console\Commands\TaskRhLeadTimeCommand;
 use App\Console\Commands\TasksMarketingColegioItaquaCommand;
 use App\Console\Commands\TasksMarketingEstacaoFuturaCommand;
@@ -24,17 +25,19 @@ class TarefaAgendada extends ServiceProvider
     {
         #php artisan schedule:work 
 
-
+        $schedule->command(TaskRhLeadTimeCommand::class);
 
         #$schedule->command(TaskRhLeadTimeCommand::class)->everyMinute(); // executa a cada 1 minuto
         
-       # $schedule->command(TasksMarketingFisk::class)->everyMinute(); // executa a cada 1 minuto
+      # $schedule->command(TasksMarketingFisk::class)->everyMinute(); // executa a cada 1 minuto
         
-        #$schedule->command(TasksMarketingEstacaoFuturaCommand::class)->everyMinute(); // executa a cada 1 minuto
+       # $schedule->command(TasksMarketingEstacaoFuturaCommand::class)->everyMinute(); // executa a cada 1 minuto
         
-        $schedule->command(TasksMarketingLiceuCommand::class)->everyMinute(); // executa a cada 1 minuto
+       # $schedule->command(TasksMarketingLiceuCommand::class)->everyMinute(); // executa a cada 1 minuto
         
-        #$schedule->command(TasksMarketingColegioItaquaCommand::class)->everyMinute(); // executa a cada 1 minuto
+       # $schedule->command(TasksMarketingColegioItaquaCommand::class)->everyMinute(); // executa a cada 1 minuto
+        
+       # $schedule->command(TaskEstrategicoTaticoCommand::class)->everyMinute(); // executa a cada 1 minuto
         
        /*
        $schedule->call(function () {

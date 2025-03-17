@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('subtasks', function (Blueprint $table) {
             $table->id();
             $table->engine = 'InnoDB'; 
             $table->string('task_id')->unique();
+            $table->string('parent')->nullable();
             $table->string('name')->nullable();
             $table->bigInteger('list_id')->nullable();
             $table->string('status')->nullable();
@@ -42,7 +43,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('list_id')->references('list_id')->on('lists')->onDelete('cascade');
-
+            $table->foreign('parent')->references('task_id')->on('tasks')->onDelete('cascade');
+        
         });
     }
 
@@ -51,6 +53,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('subtasks');
     }
 };

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessClickUpTasks;
 use App\Models\Assignee;
 use App\Models\Folder;
 use App\Models\Space;
+use App\Models\SubTask;
 use App\Models\Task;
 use App\Models\TaskAssignee;
 use App\Models\TaskList;
@@ -39,7 +41,7 @@ class ClickUpController extends Controller
     public function getFolders()
     {
 
-            # space Recursos Humanos: 90113577562
+        # space Recursos Humanos: 90113577562
 
         $folder = $this->clickUpService->getFolders("90113577562"); //Space de tecnologia da informacao
 
@@ -65,21 +67,21 @@ class ClickUpController extends Controller
         # Lista Fisk: 901108303682
 
         # Lista RH - lead time: 901109379346
+        # Estratégico e Tático: 901109890304
 
         $folder = $this->clickUpService->getTasks("901109379346");
 
-       # $dd($folder['tasks'][1]['dependencies']);
+        dd($folder);
+    }
 
-        $tasksId = $folder['tasks'][1]['dependencies'][0]['task_id'];
-        
-       # dd($tasksId);
-       
-       # 868cnag4b
+    public function getTask()
+    {
 
-        $result = $this->clickUpService->getTask("868cnag2w");
+        # recepcionisa = 868cnag2w
 
-        dd($result);
+        $task = $this->clickUpService->getTask("868cnag36");
 
+        dd($task);
     }
 
     public function createMembers()
@@ -90,7 +92,7 @@ class ClickUpController extends Controller
         #dd($workspaces['teams'][0]['members']);
         $members = $workspaces['teams'][0]['members'];
 
-        foreach($members as $member){
+        foreach ($members as $member) {
 
             $assignee_id = $member['user']['id'];
             $username = $member['user']['username'];
@@ -99,19 +101,77 @@ class ClickUpController extends Controller
 
 
             Assignee::updateOrCreate(
-                ['assignee_id' => $assignee_id], 
+                ['assignee_id' => $assignee_id],
                 [
                     'username' => $username ?? null,
                     'email' => $email ?? null,
                     'profile_picture' => $profile_picture ?? null,
                 ]
             );
-
         }
     }
 
+    private function processCustomFields($customFields)
+    {
+        $result = [
+            'cad' => null,
+            'cargo' => null,
+            'comparecimento' => null,
+            'fase_lead_time' => null,
+            'mes' => null,
+            'unidade' => null,
+            'empresa' => null,
+            'departamento_mkt' => null,
+            'planejamento' => null,
+            'delegado_para' => null,
+        ];
+
+        foreach ($customFields as $field) {
+            $fieldName = strtolower(str_replace([' ', '.'], '_', $field['name']));
+
+            if (isset($field['value'])) {
+                if (isset($field['type_config']['options'])) {
+                    foreach ($field['type_config']['options'] as $option) {
+                        if ($option['orderindex'] == $field['value']) {
+                            $result[$fieldName] = $option['name'];
+                            break;
+                        }
+                    }
+                } else {
+                    $result[$fieldName] = $field['value'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+
     public function teste()
     {
+        // Buscar as tarefas do ClickUp
+        $folder = $this->clickUpService->getTasks("901109379346");
+
+        // Atualizar ou criar a lista de tarefas
+        TaskList::updateOrCreate(
+            ['list_id' => "901109379346"],
+            ['name' => "RH - Lead Time"]
+        );
+
+        // Enviar cada tarefa para a fila
+        foreach ($folder['tasks'] as $task) {
+            ProcessClickUpTasks::dispatch($task);
+        }
+
+        return response()->json(['message' => 'Tarefas enviadas para processamento!']);
+    }
+
+    public function teste1()
+    {
+
+        set_time_limit(300); // Aumenta o tempo de execução para evitar erros
+
+
         $folder = $this->clickUpService->getTasks("901109379346");
 
 
@@ -121,112 +181,10 @@ class ClickUpController extends Controller
         );
 
 
-        foreach ($folder['tasks'] as $task) { 
+        foreach ($folder['tasks'] as $task) {
 
 
-            $cadSelecionado = null;
-            $cargoSelecionado = null;
-            $comparecimentoSelecionado = null;
-            $faseLeadTimeSelecionado = null;
-            $mesSelecionado = null;
-            $unidadeSelecionado = null;
-            
-            $empresaSelecionada = null;
-            $departamentoSelecionado = null;
-            $planejamentoSelecionado = null;
-
-            foreach ($task['custom_fields'] as $field) { 
-
-                if ($field['name'] === 'Unidade' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
-
-                        if ($option['orderindex'] == $field['value']) {
-                            $unidadeSelecionado = $option['name'];
-                            break;
-                        }
-                    }
-                }
-
-                if ($field['name'] === 'Mês' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
-
-                        if ($option['orderindex'] == $field['value']) {
-                            $mesSelecionado = $option['name'];
-                            break;
-                        }
-                    }
-                }
-
-                if ($field['name'] === 'Fases Lead Time' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
-
-                        if ($option['orderindex'] == $field['value']) {
-                            $faseLeadTimeSelecionado = $option['name'];
-                            break;
-                        }
-                    }
-                }
-
-                if ($field['name'] === 'Comparecimento' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
-
-                        if ($option['orderindex'] == $field['value']) {
-                            $comparecimentoSelecionado = $option['name'];
-                            break;
-                        }
-                    }
-                }
-
-                if ($field['name'] === 'Cargo' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
-
-                        if ($option['orderindex'] == $field['value']) {
-                            $cargoSelecionado = $option['name'];
-                            break;
-                        }
-                    }
-                }
-
-                if ($field['name'] === 'CAD' && isset($field['value'])) {
-
-
-                    $valueArray = str_split($field['value'], 3); // divide a cada 3 caracteres
-                    $valueFormatado = implode(',', $valueArray);
-                    
-                    $cadSelecionado = $valueFormatado ?? null;
-
-                }
-
-                if ($field['name'] === 'Empresa' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {         
-
-                        if ($option['orderindex'] == $field['value']) {
-                            $empresaSelecionada = $option['name'];
-                            break;
-                        }
-                    }
-                }
-                
-                if ($field['name'] === 'Depto. MKT' && isset($field['value'])) {
-                    
-                    foreach ($field['type_config']['options'] as $option) {
-                        if ($option['orderindex'] === $field['value']) {
-                            $departamentoSelecionado = $option['name'];
-                           break;
-                        }
-                    }
-                }
-
-                if ($field['name'] === 'Planejamento' && isset($field['value'])) {
-                    foreach ($field['type_config']['options'] as $option) {
-                        if ($option['orderindex'] === $field['value']) {
-                            $planejamentoSelecionado = $option['name'];
-                            break;
-                        }
-                    }
-                }
-            }   
-
+            $customFieldsTask = $this->processCustomFields($task['custom_fields']);
 
             $taskModel = Task::updateOrCreate(
                 ['task_id' => $task['id']],
@@ -239,15 +197,15 @@ class ClickUpController extends Controller
                     'date_updated' => date('Y-m-d H:i:s', $task['date_updated'] / 1000),
                     'start_date' => isset($task['start_date']) ? date('Y-m-d H:i:s', $task['start_date'] / 1000) : null,
                     'due_date' => isset($task['due_date']) ? date('Y-m-d H:i:s', $task['due_date'] / 1000) : null,
-                    'empresa' => $empresaSelecionada ?? null,
-                    'departamento_mkt' => $departamentoSelecionado ?? null,
-                    'planejamento' => $planejamentoSelecionado ?? null,
-                    'cad' => $cadSelecionado ?? null,
-                    'cargo' => $cargoSelecionado ?? null,
-                    'comparecimento' => $comparecimentoSelecionado ?? null,
-                    'fases_lead_time' => $faseLeadTimeSelecionado ?? null,
-                    'mes' => $mesSelecionado ?? null,
-                    'unidade' => $unidadeSelecionado ?? null,
+                    'empresa' => $customFieldsTask['empresa'] ?? null,
+                    'departamento_mkt' => $customFieldsTask['departamento_mkt'] ?? null,
+                    'planejamento' => $customFieldsTask['planejamento'] ?? null,
+                    'cad' => $customFieldsTask['cad'] ?? null,
+                    'cargo' => $customFieldsTask['cargo'] ?? null,
+                    'comparecimento' => $customFieldsTask['comparecimento'] ?? null,
+                    'fases_lead_time' => $customFieldsTask['fases_lead_time'] ?? null,
+                    'mes' => $customFieldsTask['mes'] ?? null,
+                    'unidade' => $customFieldsTask['unidade'] ?? null,
                 ]
             );
 
@@ -262,11 +220,63 @@ class ClickUpController extends Controller
                     'assignee_name' => $assignee['username'],
                 ]);
             }
+
+            # SUBTASKS
+
+            $subtask = $this->clickUpService->getTask($task['id']);
+
+            foreach ($subtask['subtasks'] as $item) {
+
+                $result = $this->clickUpService->getTask($item['id']);
+
+                $customFieldsSubTask = $this->processCustomFields($result['custom_fields']);
+
+                $subtaskModel = SubTask::updateOrCreate(
+                    ['task_id' => $result['id'], 'parent' => $result['parent'] ?? null],
+                    [
+                        'name' => $result['name'],
+                        'list_id' => $result['list']['id'],
+                        'status' => $result['status']['status'],
+                        'priority' => $result['priority']['priority'] ?? null,
+                        'date_created' => date('Y-m-d H:i:s', $result['date_created'] / 1000),
+                        'date_updated' => date('Y-m-d H:i:s', $result['date_updated'] / 1000),
+                        'start_date' => isset($result['start_date']) ? date('Y-m-d H:i:s', $result['start_date'] / 1000) : null,
+                        'due_date' => isset($result['due_date']) ? date('Y-m-d H:i:s', $result['due_date'] / 1000) : null,
+                        'parent' => $result['parent'] ?? null,
+                        'time_estimate' => $result['time_estimate'] ?? null,
+                        'empresa' => $customFieldsSubTask['empresa'] ?? null,
+                        'departamento_mkt' => $customFieldsSubTask['departamento_mkt'] ?? null,
+                        'planejamento' => $customFieldsSubTask['planejamento'] ?? null,
+                        'cad' => $customFieldsSubTask['cad'] ?? null,
+                        'cargo' => $customFieldsSubTask['cargo'] ?? null,
+                        'comparecimento' => $customFieldsSubTask['comparecimento'] ?? null,
+                        'fases_lead_time' => $customFieldsSubTask['fases_lead_time'] ?? null,
+                        'mes' => $customFieldsSubTask['mes'] ?? null,
+                        'unidade' => $customFieldsSubTask['unidade'] ?? null,
+                    ]
+                );
+
+                // 6️⃣ Remover antigos assignees para evitar duplicação
+                $taskModel->assignees()->delete();
+
+                // 7️⃣ Inserir novos assignees
+                foreach ($task['assignees'] as $assignee) {
+                    TaskAssignee::create([
+                        'task_id' => $subtaskModel->task_id,
+                        'assignee_id' => $assignee['id'],
+                        'assignee_name' => $assignee['username'],
+                    ]);
+                }
+            }
         }
     }
-        
-        
-    
+
+
+
+
+
+
+
 
 
     /*
