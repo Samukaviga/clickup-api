@@ -56,6 +56,7 @@ class ClickUpService
     }
 
 
+
     public function getTask($task)
     {
         $response = Http::withHeaders([
@@ -71,12 +72,23 @@ class ClickUpService
     {
         $response = Http::withHeaders([
             'Authorization' => env('CLICKUP_API_TOKEN'),
-        ])->get("https://api.clickup.com/api/v2/list/$listId/task?subtasks=true", [
+        ])->get("https://api.clickup.com/api/v2/list/$listId/task", [
             'include_closed' => true, // ✅ Incluir tarefas concluídas
-        ], ['custom_fields' => true], ['include_closed' => true]);
+        ], ['custom_fields' => true], ['include_closed' => true], ['include_closed' => true]);
+
 
         return $response->json();
     }
+
+    public function getTask($taskId)
+    {
+        $response = Http::withHeaders([
+            'Authorization' => env('CLICKUP_API_TOKEN'),
+        ])->get("https://api.clickup.com/api/v2/task/$taskId?include_subtasks=true");
+
+        return $response->json();
+    }
+
 
     /*
     public function getTasks($listId)

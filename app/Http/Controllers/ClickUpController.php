@@ -69,8 +69,9 @@ class ClickUpController extends Controller
         # Lista RH - lead time: 901109379346
         # Estratégico e Tático: 901109890304
 
-        $folder = $this->clickUpService->getTasks("901109379346");
+        # $folder = $this->clickUpService->getTasks("901109379346");
 
+<<<<<<< HEAD
         dd($folder);
     }
 
@@ -82,6 +83,11 @@ class ClickUpController extends Controller
         $task = $this->clickUpService->getTask("868cnag36");
 
         dd($task);
+=======
+        $folder = $this->clickUpService->getTask('868cnag2w');
+
+        dd($folder);
+>>>>>>> 50d1e36f61e9e3a9c81142daaebb518fe42ccb31
     }
 
     public function createMembers()
@@ -184,7 +190,112 @@ class ClickUpController extends Controller
         foreach ($folder['tasks'] as $task) {
 
 
+<<<<<<< HEAD
             $customFieldsTask = $this->processCustomFields($task['custom_fields']);
+=======
+            $cadSelecionado = null;
+            $cargoSelecionado = null;
+            $comparecimentoSelecionado = null;
+            $faseLeadTimeSelecionado = null;
+            $mesSelecionado = null;
+            $unidadeSelecionado = null;
+
+            $empresaSelecionada = null;
+            $departamentoSelecionado = null;
+            $planejamentoSelecionado = null;
+
+            foreach ($task['custom_fields'] as $field) {
+
+                if ($field['name'] === 'Unidade' && isset($field['value'])) {
+                    foreach ($field['type_config']['options'] as $option) {
+
+                        if ($option['orderindex'] == $field['value']) {
+                            $unidadeSelecionado = $option['name'];
+                            break;
+                        }
+                    }
+                }
+
+                if ($field['name'] === 'Mês' && isset($field['value'])) {
+                    foreach ($field['type_config']['options'] as $option) {
+
+                        if ($option['orderindex'] == $field['value']) {
+                            $mesSelecionado = $option['name'];
+                            break;
+                        }
+                    }
+                }
+
+                if ($field['name'] === 'Fases Lead Time' && isset($field['value'])) {
+                    foreach ($field['type_config']['options'] as $option) {
+
+                        if ($option['orderindex'] == $field['value']) {
+                            $faseLeadTimeSelecionado = $option['name'];
+                            break;
+                        }
+                    }
+                }
+
+                if ($field['name'] === 'Comparecimento' && isset($field['value'])) {
+                    foreach ($field['type_config']['options'] as $option) {
+
+                        if ($option['orderindex'] == $field['value']) {
+                            $comparecimentoSelecionado = $option['name'];
+                            break;
+                        }
+                    }
+                }
+
+                if ($field['name'] === 'Cargo' && isset($field['value'])) {
+                    foreach ($field['type_config']['options'] as $option) {
+
+                        if ($option['orderindex'] == $field['value']) {
+                            $cargoSelecionado = $option['name'];
+                            break;
+                        }
+                    }
+                }
+
+                if ($field['name'] === 'CAD' && isset($field['value'])) {
+
+
+                    $valueArray = str_split($field['value'], 3); // divide a cada 3 caracteres
+                    $valueFormatado = implode(',', $valueArray);
+
+                    $cadSelecionado = $valueFormatado ?? null;
+                }
+
+                if ($field['name'] === 'Empresa' && isset($field['value'])) {
+                    foreach ($field['type_config']['options'] as $option) {
+
+                        if ($option['orderindex'] == $field['value']) {
+                            $empresaSelecionada = $option['name'];
+                            break;
+                        }
+                    }
+                }
+
+                if ($field['name'] === 'Depto. MKT' && isset($field['value'])) {
+
+                    foreach ($field['type_config']['options'] as $option) {
+                        if ($option['orderindex'] === $field['value']) {
+                            $departamentoSelecionado = $option['name'];
+                            break;
+                        }
+                    }
+                }
+
+                if ($field['name'] === 'Planejamento' && isset($field['value'])) {
+                    foreach ($field['type_config']['options'] as $option) {
+                        if ($option['orderindex'] === $field['value']) {
+                            $planejamentoSelecionado = $option['name'];
+                            break;
+                        }
+                    }
+                }
+            }
+
+>>>>>>> 50d1e36f61e9e3a9c81142daaebb518fe42ccb31
 
             $taskModel = Task::updateOrCreate(
                 ['task_id' => $task['id']],
@@ -273,10 +384,13 @@ class ClickUpController extends Controller
 
 
 
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> 50d1e36f61e9e3a9c81142daaebb518fe42ccb31
 
 
     /*
