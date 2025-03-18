@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessClickUpSubTask;
+use App\Jobs\ProcessClickUpTasks;
 use App\Models\Task;
 use App\Models\TaskAssignee;
 use App\Models\TaskList;
@@ -10,13 +12,13 @@ use Illuminate\Console\Command;
 
 class TaskEstrategicoTaticoCommand extends Command
 {
-   
+
     protected $signature = 'app:task-estrategico-tatico-command';
 
-    
+
     protected $description = 'Command description';
 
-    
+
     protected $clickUpService;
 
     public function __construct(ClickUpService $clickUpService)
@@ -25,6 +27,36 @@ class TaskEstrategicoTaticoCommand extends Command
         $this->clickUpService = $clickUpService;
     }
 
+
+    public function handle()
+    {
+
+        $folder = $this->clickUpService->getTasks("901109890304");
+
+        TaskList::updateOrCreate(
+            ['list_id' => "901109890304"],
+            ['name' => "Estratégico e Tático"]
+        );
+
+        foreach ($folder['tasks'] as $task) {
+            ProcessClickUpTasks::dispatch($task);
+
+            $result = $this->clickUpService->getTask($task['id']);
+
+            if (isset($result['subtasks'])) {
+                foreach ($result['subtasks'] as $subtask) {
+
+                    $result2 = $this->clickUpService->getTask($subtask['id']);
+
+                    ProcessClickUpSubTask::dispatch($result2);
+                }
+            }
+        }
+    }
+
+
+
+    /*
     public function handle()
     {
         // RH - Lead Time
@@ -191,5 +223,5 @@ class TaskEstrategicoTaticoCommand extends Command
                 ]);
             }
         }
-    }
+    } */
 }

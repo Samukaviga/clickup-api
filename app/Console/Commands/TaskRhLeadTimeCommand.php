@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessClickUpSubTask;
 use App\Jobs\ProcessClickUpTasks;
 use App\Models\Task;
 use App\Models\TaskAssignee;
@@ -11,7 +12,7 @@ use Illuminate\Console\Command;
 
 class TaskRhLeadTimeCommand extends Command
 {
- 
+
     protected $signature = 'app:task-rh-lead-time';
 
 
@@ -25,8 +26,8 @@ class TaskRhLeadTimeCommand extends Command
         $this->clickUpService = $clickUpService;
     }
 
-    
-    
+
+
     public function handle()
     {
         // Buscar as tarefas do ClickUp
@@ -41,9 +42,18 @@ class TaskRhLeadTimeCommand extends Command
         // Enviar cada tarefa para a fila
         foreach ($folder['tasks'] as $task) {
             ProcessClickUpTasks::dispatch($task);
+
+            $result = $this->clickUpService->getTask($task['id']);
+
+            foreach ($result['subtasks'] as $subtask) {
+
+                $result2 = $this->clickUpService->getTask($subtask['id']);
+
+                ProcessClickUpSubTask::dispatch($result2);
+            }
         }
     }
-    
+
 
     /*
     public function handle()
