@@ -32,7 +32,7 @@ class ProcessClickUpTasks implements ShouldQueue
             ['task_id' => $this->task['id']],
             [
                 'name' => $this->task['name'],
-                'list_id' => "901109379346",
+                'list_id' => $this->task['list']['id'],
                 'status' => $this->task['status']['status'],
                 'priority' => $this->task['priority']['priority'] ?? null,
                 'date_created' => date('Y-m-d H:i:s', $this->task['date_created'] / 1000),

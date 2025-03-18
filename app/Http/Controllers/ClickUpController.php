@@ -70,7 +70,7 @@ class ClickUpController extends Controller
         # Lista RH - lead time: 901109379346
         # Estratégico e Tático: 901109890304
 
-        $folder = $this->clickUpService->getTasks("901109379346");
+        $folder = $this->clickUpService->getTasks("901109890304");
 
 
         dd($folder);
