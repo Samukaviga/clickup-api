@@ -4,19 +4,17 @@ namespace App\Console\Commands;
 
 use App\Jobs\ProcessClickUpSubTask;
 use App\Jobs\ProcessClickUpTasks;
-use App\Models\Task;
-use App\Models\TaskAssignee;
 use App\Models\TaskList;
 use App\Services\ClickUpService;
 use Illuminate\Console\Command;
 
-class TasksMarketingColegioItaquaCommand extends Command
+class TaskRhComunicacaoCommand extends Command
 {
 
-    protected $signature = 'app:tasks-marketing-colegio-itaqua-command';
+    protected $signature = 'app:task-rh-comunicacao-command';
 
 
-    protected $description = 'Tasks of List Marketing Colegio Itaqua';
+    protected $description = 'Command description';
 
 
     protected $clickUpService;
@@ -27,7 +25,6 @@ class TasksMarketingColegioItaquaCommand extends Command
         $this->clickUpService = $clickUpService;
     }
 
-
     public function handle()
     {
 
@@ -35,14 +32,15 @@ class TasksMarketingColegioItaquaCommand extends Command
 
         do {
 
-            $folder = $this->clickUpService->getTasks("901108288683", $page);
+            $folder = $this->clickUpService->getTasks("901109418593", $page);
 
             if (!empty($folder['tasks'])) {
                 TaskList::updateOrCreate(
-                    ['list_id' => "901108288683"],
+                    ['list_id' => "901109418593"],
                     ['name' => $folder['tasks'][0]['list']['name']],
                 );
             }
+
 
             foreach ($folder['tasks'] as $task) {
                 ProcessClickUpTasks::dispatch($task);
@@ -58,7 +56,6 @@ class TasksMarketingColegioItaquaCommand extends Command
                     }
                 }
             }
-
 
             $page++;
         } while (!empty($folder['tasks']));

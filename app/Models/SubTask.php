@@ -31,6 +31,7 @@ class SubTask extends Model
         'parent',
         'time_estimate',
         'delegado_para',
+        'departamento',
     ];
 
     protected $casts = [

@@ -2,8 +2,14 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\TaskEadCommand;
 use App\Console\Commands\TaskEstrategicoTaticoCommand;
+use App\Console\Commands\TaskMetasGlobaisCommand;
+use App\Console\Commands\TaskQICommand;
+use App\Console\Commands\TaskRhComunicacaoCommand;
 use App\Console\Commands\TaskRhLeadTimeCommand;
+use App\Console\Commands\TaskRhSolicitacaoDeVaga;
+use App\Console\Commands\TaskRhSolicitacaoDeVagaCommand;
 use App\Console\Commands\TasksMarketingColegioItaquaCommand;
 use App\Console\Commands\TasksMarketingEstacaoFuturaCommand;
 use App\Console\Commands\TasksMarketingFisk;
@@ -32,8 +38,22 @@ class TarefaAgendada extends ServiceProvider
             \Artisan::call(TaskEstrategicoTaticoCommand::class);
         })->everyMinute();*/
 
-        $schedule->command(TaskRhLeadTimeCommand::class);
-        $schedule->command(TaskEstrategicoTaticoCommand::class);
+        # ->hourly();
+
+        $schedule->command(TaskRhLeadTimeCommand::class)->hourly();
+        $schedule->command(TaskRhSolicitacaoDeVagaCommand::class)->hourly();
+        $schedule->command(TaskRhComunicacaoCommand::class)->hourly();
+        $schedule->command(TaskEstrategicoTaticoCommand::class)->hourly();
+        $schedule->command(TasksMarketingFisk::class)->hourly();
+        $schedule->command(TasksMarketingEstacaoFuturaCommand::class)->hourly();
+        $schedule->command(TasksMarketingLiceuCommand::class)->hourly();
+        $schedule->command(TasksMarketingColegioItaquaCommand::class)->hourly();
+        $schedule->command(TaskQICommand::class)->hourly();
+        $schedule->command(TaskEadCommand::class)->hourly();
+        $schedule->command(TaskMetasGlobaisCommand::class)->hourly();
+       
+
+        # $schedule->command(TaskRhLeadTimeCommand::class);
 
         # $schedule->command(TasksMarketingFisk::class)->everyMinute(); // executa a cada 1 minuto
 

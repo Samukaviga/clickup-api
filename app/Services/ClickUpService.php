@@ -68,16 +68,25 @@ class ClickUpService
 
 
     // buscar tasks (TAREFAS)
-    public function getTasks($listId)
+    public function getTasks($listId, $page)
     {
+        /*
         $response = Http::withHeaders([
             'Authorization' => env('CLICKUP_API_TOKEN'),
-        ])->get("https://api.clickup.com/api/v2/list/$listId/task", [
-            'include_closed' => true, // ✅ Incluir tarefas concluídas
-        ], ['custom_fields' => true], ['include_closed' => true], ['include_closed' => true]);
+        ])->get("https://api.clickup.com/api/v2/list/$listId/task?page=0");
 
 
-        return $response->json();
+        return $response->json(); */
+
+       
+        $response = Http::withHeaders([
+            'Authorization' => env('CLICKUP_API_TOKEN'),
+            'Accept' => 'application/json',
+        ])->get("https://api.clickup.com/api/v2/list/$listId/task?page=$page&include_closed=true");
+    
+        return $response->json(); 
+            
+        
     }
 
 

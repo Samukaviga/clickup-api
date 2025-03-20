@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessClickUpSubTask;
+use App\Jobs\ProcessClickUpTasks;
 use App\Models\Assignee;
 use App\Models\Task;
 use App\Models\TaskAssignee;
@@ -26,6 +28,66 @@ class TasksMarketingLiceuCommand extends Command
     }
 
 
+    public function handle()
+    {
+
+        // Add members
+        $workspaces = $this->clickUpService->getWorkspaces();
+
+        $members = $workspaces['teams'][0]['members'];
+
+        foreach ($members as $member) {
+
+            $assignee_id = $member['user']['id'];
+            $username = $member['user']['username'];
+            $email = $member['user']['email'];
+            $profile_picture = $member['user']['profilePicture'];
+
+
+            Assignee::updateOrCreate(
+                ['assignee_id' => $assignee_id],
+                [
+                    'username' => $username ?? null,
+                    'email' => $email ?? null,
+                    'profile_picture' => $profile_picture ?? null,
+                ]
+            );
+        }
+        // end members
+
+        $page = 0;
+
+        do {
+
+            $folder = $this->clickUpService->getTasks("901108220827", $page);
+
+            if (!empty($folder['tasks'])) {
+                TaskList::updateOrCreate(
+                    ['list_id' => "901108220827"],
+                    ['name' => $folder['tasks'][0]['list']['name']],
+                );
+            }
+
+            foreach ($folder['tasks'] as $task) {
+                ProcessClickUpTasks::dispatch($task);
+
+                $result = $this->clickUpService->getTask($task['id']);
+
+                if (isset($result['subtasks'])) {
+                    foreach ($result['subtasks'] as $subtask) {
+
+                        $result2 = $this->clickUpService->getTask($subtask['id']);
+
+                        ProcessClickUpSubTask::dispatch($result2);
+                    }
+                }
+            }
+
+            $page++;
+        } while (!empty($folder['tasks']));
+    }
+
+    /*
     public function handle()
     {
 
@@ -140,5 +202,5 @@ class TasksMarketingLiceuCommand extends Command
             }
         }
     
-    }
+    } */
 }

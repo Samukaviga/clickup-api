@@ -23,6 +23,7 @@ return new class extends Migration
 
             $table->string('empresa')->nullable();
             $table->string('departamento_mkt')->nullable();
+            $table->string('departamento')->nullable();
             $table->string('planejamento')->nullable();
             
             $table->string('cad')->nullable();

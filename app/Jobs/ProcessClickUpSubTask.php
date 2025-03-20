@@ -38,6 +38,7 @@ class ProcessClickUpSubTask implements ShouldQueue
                 'time_estimate' => isset($this->task['time_estimate']) ? date('Y-m-d H:i:s', $this->task['time_estimate'] / 1000) : null,
                 'empresa' => $customFieldsSubTask['empresa'] ?? null,
                 'departamento_mkt' => $customFieldsSubTask['departamento_mkt'] ?? null,
+                'departamento' => $customFieldsSubTask['departamento'] ?? null,
                 'planejamento' => $customFieldsSubTask['planejamento'] ?? null,
                 'cad' => $customFieldsSubTask['cad'] ?? null,
                 'cargo' => $customFieldsSubTask['cargo'] ?? null,
@@ -61,6 +62,8 @@ class ProcessClickUpSubTask implements ShouldQueue
         }
     }
 
+
+    /*
     private function processCustomFields($customFields)
     {
         $result = [
@@ -89,6 +92,133 @@ class ProcessClickUpSubTask implements ShouldQueue
                     }
                 } else {
                     $result[$fieldName] = $field['value'];
+                }
+            }
+        }
+
+        return $result;
+    } */
+
+    private function processCustomFields($customFields)
+    {
+        $result = [
+            'cad' => null,
+            'cargo' => null,
+            'comparecimento' => null,
+            'fase_lead_time' => null,
+            'mes' => null,
+            'unidade' => null,
+            'empresa' => null,
+            'departamento_mkt' => null,
+            'departamento' => null,
+            'planejamento' => null,
+            'delegado_para' => null,
+        ];
+
+
+        foreach ($customFields as $field) {
+
+            if ($field['name'] === 'Delegado para' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+
+                    if ($option['orderindex'] == $field['value']) {
+                        $result['delegado_para'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Departamento' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+
+                    if ($option['orderindex'] == $field['value']) {
+                        $result['departamento'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Unidade' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+
+                    if ($option['orderindex'] == $field['value']) {
+                        $result['unidade'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Mês' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+
+                    if ($option['orderindex'] == $field['value']) {
+                        $result['mes'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Fases Lead Time' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+
+                    if ($option['orderindex'] == $field['value']) {
+                        $result['fase_lead_time'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Comparecimento' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+
+                    if ($option['orderindex'] == $field['value']) {
+                        $result['comparecimento'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Cargo' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+
+                    if ($option['orderindex'] == $field['value']) {
+                        $result['cargo'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'CAD' && isset($field['value'])) {
+
+                $result['cad'] = $field['value'] ?? null;
+            }
+
+            if ($field['name'] === 'Empresa' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+
+                    if ($option['orderindex'] == $field['value']) {
+                        $result['empresa'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Depto. MKT' && isset($field['value'])) {
+
+                foreach ($field['type_config']['options'] as $option) {
+                    if ($option['orderindex'] === $field['value']) {
+                        $result['departamento_mkt'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Planejamento' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+                    if ($option['orderindex'] === $field['value']) {
+                        $result['planejamento'] = $option['name'];
+                        break;
+                    }
                 }
             }
         }

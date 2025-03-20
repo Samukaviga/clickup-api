@@ -68,9 +68,18 @@ class ClickUpController extends Controller
         # Lista Fisk: 901108303682
 
         # Lista RH - lead time: 901109379346
+        # Lista Solicitação de vaga: 901109415469
+        # Lista Comunicacao: 901109418593
+
+        # Lista EAD: 901109568613
+
         # Estratégico e Tático: 901109890304
 
-        $folder = $this->clickUpService->getTasks("901109890304");
+        # Lista Q.E: 901109376530
+
+        # Lista Metas Globais: 901109507318
+
+        $folder = $this->clickUpService->getTasks("901109376530", 3);
 
 
         dd($folder);
@@ -232,33 +241,60 @@ class ClickUpController extends Controller
     public function teste()
     {
         // Buscar as tarefas do ClickUp
-        $folder = $this->clickUpService->getTasks("901109379346");
+        $folder = $this->clickUpService->getTasks("901109376530");
 
         // Atualizar ou criar a lista de tarefas
         TaskList::updateOrCreate(
-            ['list_id' => "901109379346"],
-            ['name' => "RH - Lead Time"]
+            ['list_id' => "901109376530"],
+            ['name' => $folder['tasks'][0]['list']['name']]
         );
 
         // Enviar cada tarefa para a fila
         foreach ($folder['tasks'] as $task) {
-            # ProcessClickUpTasks::dispatch($task);
-            $result = $this->clickUpService->getTask($task['id']);
+            ProcessClickUpTasks::dispatch($task);
+           # $result = $this->clickUpService->getTask($task['id']);
+
+           # $customFields = $this->processCustomFields($result['custom_fields']);
+
+           # dd($customFields['mes']);
+            /*
+            $taskModel = Task::updateOrCreate(
+                ['task_id' => $result['id']],
+                [
+                    'name' => $result['name'],
+                    'list_id' => $result['list']['id'],
+                    'status' => $result['status']['status'],
+                    'priority' => $result['priority']['priority'] ?? null,
+                    'date_created' => date('Y-m-d H:i:s', $result['date_created'] / 1000),
+                    'date_updated' => date('Y-m-d H:i:s', $result['date_updated'] / 1000),
+                    'start_date' => isset($result['start_date']) ? date('Y-m-d H:i:s', $result['start_date'] / 1000) : null,
+                    'due_date' => isset($result['due_date']) ? date('Y-m-d H:i:s', $result['due_date'] / 1000) : null,
+                    'empresa' => $customFields['empresa'] ?? null,
+                    'departamento_mkt' => $customFields['departamento_mkt'] ?? null,
+                    'planejamento' => $customFields['planejamento'] ?? null,
+                    'cad' => $customFields['cad'] ?? null,
+                    'cargo' => $customFields['cargo'] ?? null,
+                    'comparecimento' => $customFields['comparecimento'] ?? null,
+                    'fases_lead_time' => $customFields['fases_lead_time'] ?? null,
+                    'mes' => $customFields['mes'] ?? null,
+                    'unidade' => $customFields['unidade'] ?? null,
+                    'delegado_para' => $customFields['delegado_para'] ?? null,
+                ]
+            );*/
 
 
 
-            $custom = $this->processCustomFields($result['custom_fields']);
+            if (isset($result['subtasks'])) {
+                foreach ($result['subtasks'] as $subtask) {
 
-            dd($custom);
+                    $result2 = $this->clickUpService->getTask($subtask['id']);
 
-            foreach ($result['subtasks'] as $subtask) {
-
-                $result2 = $this->clickUpService->getTask($subtask['id']);
-
-                ProcessClickUpSubTask::dispatch($result2);
-
-                dd("deu certo");
+                    ProcessClickUpSubTask::dispatch($result2);
+                }
             }
+
+            dd("deu certo");
+
         }
 
         return response()->json(['message' => 'Tarefas enviadas para processamento!']);
@@ -366,8 +402,6 @@ class ClickUpController extends Controller
             }
         }
     }
-
-
 
 
     /*
