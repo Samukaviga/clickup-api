@@ -36,6 +36,10 @@ class Task extends Model
         'time_estimate',
         'delegado_para',
         'departamento',
+        'compras_quantidade_itens', 
+        'compras_tipo',
+        'compras_tipo_solicitacao', 
+        'description',
     ];
 
     protected $casts = [

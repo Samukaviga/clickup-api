@@ -50,8 +50,19 @@ class ProcessClickUpTasks implements ShouldQueue
                 'mes' => $customFields['mes'] ?? null,
                 'unidade' => $customFields['unidade'] ?? null,
                 'delegado_para' => $customFields['delegado_para'] ?? null,
+                'compras_quantidade_itens' => $customFields['quantidade'] ?? null,
+                'compras_tipo' => $customFields['tipo'] ?? null,
+                'compras_tipo_solicitacao' => $customFields['tipo_de_solicitacao'] ?? null,
+                'description' =>  $this->task['description'],
+                
             ]
         );
+
+        #$table->string('compras_quantidade_itens')->nullable();
+        #$table->string('compras_tipo')->nullable();
+        #$table->string('compras_tipo_solicitacao')->nullable();
+        
+        #$table->string('description')->nullable();
 
         // Remover antigos assignees
         $taskModel->assignees()->delete();
@@ -110,7 +121,7 @@ class ProcessClickUpTasks implements ShouldQueue
             'cad' => null,
             'cargo' => null,
             'comparecimento' => null,
-            'fase_lead_time' => null,
+            'fases_lead_time' => null,
             'mes' => null,
             'unidade' => null,
             'empresa' => null,
@@ -118,6 +129,9 @@ class ProcessClickUpTasks implements ShouldQueue
             'departamento' => null,
             'planejamento' => null,
             'delegado_para' => null,
+            'tipo_de_solicitacao' => null,
+            'tipo' => null,
+            'quantidade' => null,
         ];
 
 
@@ -167,7 +181,7 @@ class ProcessClickUpTasks implements ShouldQueue
                 foreach ($field['type_config']['options'] as $option) {
 
                     if ($option['orderindex'] == $field['value']) {
-                        $result['fase_lead_time'] = $option['name'];
+                        $result['fases_lead_time'] = $option['name'];
                         break;
                     }
                 }
@@ -226,6 +240,33 @@ class ProcessClickUpTasks implements ShouldQueue
                     }
                 }
             }
+
+            # Compras
+            if ($field['name'] === 'Tipo de Solicitação' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+                    if ($option['orderindex'] === $field['value']) {
+                        $result['tipo_de_solicitacao'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Tipo' && isset($field['value'])) {
+                foreach ($field['type_config']['options'] as $option) {
+                    if ($option['orderindex'] === $field['value']) {
+                        $result['tipo'] = $option['name'];
+                        break;
+                    }
+                }
+            }
+
+            if ($field['name'] === 'Quantidade' && isset($field['value'])) {
+                
+                     $result['quantidade'] = $field['value'] ?? null;
+              
+            }
+
+           
         }
 
         return $result;

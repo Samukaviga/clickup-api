@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('departamento_mkt')->nullable();
             $table->string('departamento')->nullable();
             $table->string('planejamento')->nullable();
-            
+            # Custom RH
             $table->string('cad')->nullable();
             $table->string('cargo')->nullable();
             $table->string('comparecimento')->nullable();
@@ -32,6 +32,13 @@ return new class extends Migration
             $table->string('mes')->nullable();
             $table->string('unidade')->nullable();
             $table->string('delegado_para')->nullable();
+
+            # Custom Compras
+            $table->string('compras_quantidade_itens')->nullable();
+            $table->string('compras_tipo')->nullable();
+            $table->string('compras_tipo_solicitacao')->nullable();
+            
+            $table->longText('description')->nullable();
 
             $table->string('time_estimate')->nullable();
 
